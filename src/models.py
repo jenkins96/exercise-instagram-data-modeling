@@ -18,68 +18,91 @@ class User(Base):
     email = Column(String(250), nullable=False)
     password = Column(String(250), nullable=False)
     type_of_account = Column(String(250), nullable=False)
+    # Relationship
+    like = relationship("Like")
+    user_from_id_follower  = relationship("Follower")
+    user_to_id_follower = relationship("Follower")
+    post = relationship("Post")
+    share = relationship("Share")
+    comment = relationship("Comment")
+    save_post = relationship("Save_Post")
+    products = relationship("Products")
+    
+   
 
 class Follower(Base):
-    __tablename__="follower"
+    __tablename__ = "follower"
     FollowerID = Column(Integer, primary_key=True)
-    # userfromid; usertoid
+    # Relationships
+    user_from_id = relationship("User")
+    user_to_id = relationship("User")
+    
 
 class Post(Base):
-    __tablename__="post"
+    __tablename__ = "post"
     PostID = Column(Integer, primary_key=True)
-    # userid as FK
+    # Foreign Keys
+    user_id = Column(Integer, ForeignKey("User.UserID"))
+    # Relationship
+    like_post = relationship("Like")
+    post_id_media = relationship("Media")
+    post_id_comment = relationship("Comment")
+    post_id_save_post = relationship("Save_Post")
+    
 
 class Media(Base):
-    __tablename__="media"
+    __tablename__ = "media"
     MediaID = Column(Integer, primary_key=True)
     url = Column(String(250), nullable=False)
-    #postid as FK
+    # Foreign Key
+    post_id = Column(Integer, ForeignKey("Post.PostID"))
+    
 
 class Like(Base):
-    __tablename__="like"
+    __tablename__ = "like"
     LikeID = Column(Integer, primary_key=True)
+    # Foreign Keys
+    user_id = Column(Integer, ForeignKey("User.UserID"))
+    post_id = Column(Integer, ForeignKey("Post.PostID"))
+    user_id = Column(Integer, ForeignKey("User.UserID"))
     #userid as FK && postid as FK
 
 class Share(Base):
-    __tablename__="share"
+    __tablename__ = "share"
     ShareID = Column(Integer, primary_key=True)
+    # Foreign Keys
+    user_id = Column(Integer, ForeignKey("User.UserID"))
     #userid as FK && postid as FK
 
 class Comment(Base):
-    __tablename__='comment'
-     CommentID = Column(Integer, primary_key=True)
-     text_comment = Column(String(250), nullable=False)
-     # author id == userid as FK && postid as FK
+    __tablename__ = 'comment'
+    CommentID = Column(Integer, primary_key=True)
+    text_comment = Column(String(250), nullable=False)
+    # Foreign Keys
+    author_id = Column(Integer, ForeignKey("User.UserID"))
+    post_id = Column(Integer, ForeignKey("Post.PostID"))
 
 class Save_Post(Base):
-    __tablename__="save_post"
-     Save_PostID = Column(Integer, primary_key=True)
-     #userid as FK && postid as FK
+    __tablename__ = "save_post"
+    Save_PostID = Column(Integer, primary_key=True)
+    # Foreign Keys
+    user_id = Column(Integer, ForeignKey("User.UserID"))
+    post_id = Column(Integer, ForeignKey("Post.PostID"))
+    #userid as FK && postid as FK
 
 class Products(Base):
-    __tablename__="products"
-     ProductsID = Column(Integer, primary_key=True)
-     prod_name_1 = Column(String(250), nullable=True)
-     prod_name_2 = Column(String(250), nullable=True)
-     amount = Column(Integer)
-     #userid as FK
+    __tablename__ = "products"
+    ProductsID = Column(Integer, primary_key=True)
+    prod_name_1 = Column(String(250), nullable=True)
+    prod_name_2 = Column(String(250), nullable=True)
+    amount = Column(Integer)
+    # Foreign Keys
+    user_id = Column(Integer, ForeignKey("User.UserID"))
+    #userid as FK
 
 class Transactions(Base):
-    __tablename__="transactions"
+    __tablename__ = "transactions"
     TransactionsID = Column(Integer, primary_key=True)
-    
-
-
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
 
     def to_dict(self):
         return {}
